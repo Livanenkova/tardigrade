@@ -228,7 +228,7 @@
             </label>
             <label>
                 <input type="checkbox" id="fixCapitalization">
-                Fix Capitalization
+                Fix Headings Capitalization (APA Style)
             </label>
             <label>
                 <input type="checkbox" id="findDuplicates">
@@ -268,7 +268,7 @@
         </div>
     </div>
     <script>
-        document.addEventListener("DOMContentLoaded", function() {
+document.addEventListener("DOMContentLoaded", function() {
     const progressCircle = document.querySelector('.progress-circle .progress');
     const radius = progressCircle.r.baseVal.value;
     const circumference = 2 * Math.PI * radius;
@@ -302,6 +302,7 @@ async function processHtml() {
     }
 
     if (document.getElementById('fixCapitalization').checked) {
+        console.log("Fixing capitalization..."); // Для отладки
         fixHeadingsCapitalization(doc);
     }
 
@@ -317,10 +318,6 @@ async function processHtml() {
         findDuplicateLinks(doc);
     }
 
-    if (document.getElementById('checkErrors').checked) {
-        await checkLinksForErrors(doc);
-    }
-
     updateProgress(100);
 
     const appendReferences = document.getElementById('appendReferencesCheckbox').checked;
@@ -328,6 +325,9 @@ async function processHtml() {
         const formattedOutput = document.getElementById('formattedOutput');
         formattedOutput.value += "\n\n" + document.getElementById('resultHtml').value;
     }
+
+    // Отображение результата в поле "Formatted HTML"
+    document.getElementById('formattedOutput').value = doc.body.innerHTML;
 }
 
 function cleanAndFormatHtml(doc) {
@@ -426,6 +426,33 @@ function findDuplicateLinks(doc) {
     } else {
         duplicateLinksContainer.innerHTML = '<p>No duplicate links found.</p>';
     }
+}
+
+function fixHeadingsCapitalization(doc) {
+    const headings = doc.querySelectorAll('h1, h2, h3, h4, h5, h6');
+    const minorWords = [
+        "a", "an", "and", "as", "at", "but", "by", "for", "if", 
+        "in", "nor", "of", "on", "or", "so", "the", "to", "up", "yet", "with"
+    ];
+
+    headings.forEach(heading => {
+        const text = heading.textContent.trim(); // Убираем лишние пробелы
+        if (!text) return; // Пропускаем пустые заголовки
+
+        const words = text.split(/\s+/).map((word, index, arr) => {
+            const lowerWord = word.toLowerCase();
+            if (
+                index === 0 || // Первое слово
+                index === arr.length - 1 || // Последнее слово
+                !minorWords.includes(lowerWord) // Не служебное слово
+            ) {
+                return word.charAt(0).toUpperCase() + word.slice(1).toLowerCase(); // Капитализация
+            }
+            return lowerWord; // Слово остается в нижнем регистре
+        });
+
+        heading.textContent = words.join(" "); // Преобразуем массив обратно в строку
+    });
 }
 
 function toTitleCase(str) {
