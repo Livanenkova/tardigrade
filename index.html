@@ -435,6 +435,7 @@ function replaceSocialLinks(doc) {
 async function generateReferences(doc) {
     const links = doc.querySelectorAll('a[href]');
     const referencesContainer = document.getElementById('result');
+    
     let referencesHTML = `
     [reference_content]
     <div class="reference-heading reference-content-collapsible-heading">
@@ -449,18 +450,21 @@ async function generateReferences(doc) {
 
     if (links.length > 0) {
         for (const link of links) {
-            const href = cleanURL(link.getAttribute('href'));
+            let href = cleanURL(link.getAttribute('href'));
             const domain = extractDomain(href);
 
-            if (!linkSet.has(href)) {
-                linkSet.add(href);
+            // Исключение ссылок на "Techopedia"
+            if (domain.toLowerCase() !== 'techopedia') {
+                if (!linkSet.has(href)) {
+                    linkSet.add(href);
 
-                const title = await fetchTitle(href);
-                const formattedDomain = toTitleCase(domain);
+                    const title = await fetchTitle(href);
+                    const formattedDomain = toTitleCase(domain);
 
-                const liHTML = `<li><a href="${href}" target="_blank">${title}</a> (${formattedDomain})</li>`;
-                frontendLinksHTML += liHTML;
-                referencesHTML += liHTML;
+                    const liHTML = `<li><a href="${href}" target="_blank">${title}</a> (${formattedDomain})</li>`;
+                    frontendLinksHTML += liHTML;
+                    referencesHTML += liHTML;
+                }
             }
         }
 
@@ -468,6 +472,7 @@ async function generateReferences(doc) {
         </ol>
     </div>
     [/reference_content]`;
+
     } else {
         referencesHTML += `
         </ol>
@@ -478,7 +483,6 @@ async function generateReferences(doc) {
     referencesContainer.innerHTML = frontendLinksHTML;
     document.getElementById('resultHtml').value = referencesHTML;
 }
-
 function findDuplicateLinks(doc) {
     const links = doc.querySelectorAll('a[href]');
     const linkMap = new Map();
