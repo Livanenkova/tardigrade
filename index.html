@@ -3,11 +3,18 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>HTML Formatter and External Links Finder</title>
+    <title>Tardigrade</title>
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600&display=swap" rel="stylesheet">
     <style>
+<head>
+    <title>Your Page Title</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600&display=swap" rel="stylesheet">
+    <style>
+        /* Вставляем CSS сюда */
         * {
             box-sizing: border-box;
             margin: 0;
@@ -48,7 +55,8 @@
         }
 
         textarea {
-            width: 100%;
+            max-width: 100%; /* Ограничивает ширину полей */
+            box-sizing: border-box; 
             padding: 10px;
             margin-bottom: 15px;
             border: 1px solid #ddd;
@@ -57,6 +65,57 @@
             color: #333;
             resize: vertical;
             overflow-y: auto;
+        }
+
+        .description-container {
+            text-align: left;
+            margin-bottom: 20px;
+            padding: 20px;
+            background-color: #f4f4f9;
+            border: 1px solid #ddd;
+            border-radius: 8px;
+            box-shadow: 0px 4px 10px rgba(0, 0, 0, 0.1);
+        }
+
+        .description-title {
+            color: rgb(0, 78, 214);
+            font-size: 1.8rem;
+            font-weight: 600;
+            margin-bottom: 10px;
+            text-align: center;
+        }
+
+        .description-subtitle {
+            font-size: 1.2rem;
+            color: rgb(0, 78, 214);
+            margin-bottom: 15px;
+            text-align: center;
+        }
+
+        .description-list {
+            margin-left: 20px;
+            color: rgb(0, 78, 214);
+            font-size: 1rem;
+            line-height: 1.6;
+        }
+
+        .description-list li {
+            margin-bottom: 8px;
+        }
+
+        .description-footer {
+            font-size: 1rem;
+            font-weight: 600;
+            color: rgb(0, 78, 214);
+            margin-top: 20px;
+            text-align: center;
+        }
+
+        .instruction-text {
+            color: rgb(0, 78, 214);
+            font-size: 1rem;
+            margin-bottom: 20px;
+            text-align: center;
         }
 
         textarea:focus {
@@ -135,17 +194,18 @@
         }
 
         #result {
-            width: 100%;
-            max-height: 150px;
-            overflow-y: auto;
-            background-color: #f9f9f9;
-            padding: 15px;
-            border: 1px solid #ddd;
-            border-radius: 4px;
-            color: #444;
-            font-size: 0.9rem;
-            margin-bottom: 10px;
-        }
+    max-width: 100%; /* Убедитесь, что ширина не превышает контейнер */
+    box-sizing: border-box; /* Учитывайте отступы */
+    padding: 10px;
+    margin-bottom: 15px;
+    background-color: #f9f9f9;
+    border: 1px solid #ddd;
+    border-radius: 4px;
+    color: #444;
+    font-size: 0.9rem;
+    resize: vertical;
+    overflow-y: auto;
+}
 
         .progress-circle {
             position: relative;
@@ -204,47 +264,68 @@
             text-align: left;
             overflow-y: auto;
         }
+
+        #htmlInput {
+    width: 100%; /* Растянуть поле на всю ширину контейнера */
+    max-width: 100%; /* Ограничить ширину, чтобы она не превышала ширину контейнера */
+    box-sizing: border-box; /* Учитывать отступы и границы в ширине */
+}
     </style>
 </head>
 <body>
     <div class="container">
-        <h1>HTML Formatter and External Links Finder</h1>
-        <p>Enter the HTML content below to find all external links and format content:</p>
+        <div class="description-container">
+            <h1 class="description-title">Tardigrade: Your Tiny HTML Helper</h1>
+            <p class="description-subtitle">A handy tool for working with HTML:</p>
+            <ul class="description-list">
+                <li>Cleans up unnecessary tags and attributes.</li>
+                <li>Fixes heading capitalization (APA style).</li>
+                <li>Finds and organizes external links.</li>
+                <li>Detects duplicate links.</li>
+                <li>Replaces social media links automatically.</li>
+                <li>Simplifies and tidies up HTML code.</li>
+            </ul>
+            <p class="description-footer"><strong>Small but powerful, ready to assist you! 🚀</strong></p>
+        </div>
+        <p class="instruction-text">Enter the HTML content below to find all external links and format content:</p>      
+          <textarea id="htmlInput" rows="10" placeholder="Paste HTML content here..."></textarea>
 
-        <textarea id="htmlInput" rows="10" placeholder="Paste HTML content here..."></textarea>
-
-        <div class="button-progress-container">
-            <label>
-                <input type="checkbox" id="appendReferencesCheckbox">
-                Append References to Formatted HTML
-            </label>
-            <label>
-                <input type="checkbox" id="findExternalLinks">
-                Find External Links
-            </label>
-            <label>
-                <input type="checkbox" id="replaceSocialLinks">
-                Replace Social Links
-            </label>
-            <label>
-                <input type="checkbox" id="fixCapitalization">
-                Fix Headings Capitalization (APA Style)
-            </label>
-            <label>
-                <input type="checkbox" id="findDuplicates">
-                Find Duplicate Links
-            </label>
-            <label>
-                <input type="checkbox" id="checkErrors">
-                Check Links for Errors
-            </label>
-            <button onclick="processHtml()">Process HTML</button>
-            <div class="progress-circle">
-                <svg viewBox="0 0 60 60">
-                    <circle class="bg" cx="30" cy="30" r="28"></circle>
-                    <circle class="progress" cx="30" cy="30" r="28"></circle>
-                </svg>
-                <div class="percentage" id="progressPercentage">0%</div>
+        <div class="options-container">
+            <div class="checkbox-group">
+                <label>
+                    <input type="checkbox" id="appendReferencesCheckbox">
+                    Append References to HTML
+                </label>
+                <label>
+                    <input type="checkbox" id="findExternalLinks">
+                    Find External Links
+                </label>
+                <label>
+                    <input type="checkbox" id="replaceSocialLinks">
+                    Fix Twitter
+                </label>
+                <label>
+                    <input type="checkbox" id="fixCapitalization">
+                    Fix Headings (APA)
+                </label>
+                <label>
+                    <input type="checkbox" id="findDuplicates">
+                    Find Duplicate Links
+                </label>
+                <label>
+                    <input type="checkbox" id="checkErrors">
+                    Check Links for Errors
+                </label>
+            </div>
+            <div class="button-progress-wrapper">
+                <button onclick="processHtml()">Process HTML</button>
+                <div class="progress-circle">
+                    <svg viewBox="0 0 60 60">
+                        <circle class="bg" cx="30" cy="30" r="28"></circle>
+                        <circle class="progress" cx="30" cy="30" r="28"></circle>
+                    </svg>
+                    <div class="percentage" id="progressPercentage">0%</div>
+                </div>
             </div>
         </div>
 
@@ -268,7 +349,7 @@
         </div>
     </div>
     <script>
-document.addEventListener("DOMContentLoaded", function() {
+document.addEventListener("DOMContentLoaded", function () {
     const progressCircle = document.querySelector('.progress-circle .progress');
     const radius = progressCircle.r.baseVal.value;
     const circumference = 2 * Math.PI * radius;
@@ -302,7 +383,6 @@ async function processHtml() {
     }
 
     if (document.getElementById('fixCapitalization').checked) {
-        console.log("Fixing capitalization..."); // Для отладки
         fixHeadingsCapitalization(doc);
     }
 
@@ -318,16 +398,16 @@ async function processHtml() {
         findDuplicateLinks(doc);
     }
 
-    updateProgress(100);
-
     const appendReferences = document.getElementById('appendReferencesCheckbox').checked;
+    const formattedOutput = document.getElementById('formattedOutput');
+    formattedOutput.value = doc.body.innerHTML;
+
     if (appendReferences) {
-        const formattedOutput = document.getElementById('formattedOutput');
-        formattedOutput.value += "\n\n" + document.getElementById('resultHtml').value;
+        const referencesHtml = document.getElementById('resultHtml').value;
+        formattedOutput.value += `\n\n${referencesHtml}`;
     }
 
-    // Отображение результата в поле "Formatted HTML"
-    document.getElementById('formattedOutput').value = doc.body.innerHTML;
+    updateProgress(100);
 }
 
 function cleanAndFormatHtml(doc) {
@@ -344,15 +424,17 @@ function cleanAndFormatHtml(doc) {
 }
 
 function replaceSocialLinks(doc) {
-    doc.querySelectorAll('a[href*="www.x.com"]').forEach(link => {
-        link.setAttribute('href', 'https://www.twitter.com');
+    const links = doc.querySelectorAll('a[href*="www.x.com"]');
+    links.forEach(link => {
+        const oldHref = link.getAttribute('href');
+        const newHref = oldHref.replace("www.x.com", "www.twitter.com");
+        link.setAttribute('href', newHref);
     });
 }
 
 async function generateReferences(doc) {
     const links = doc.querySelectorAll('a[href]');
     const referencesContainer = document.getElementById('result');
-    
     let referencesHTML = `
     [reference_content]
     <div class="reference-heading reference-content-collapsible-heading">
@@ -367,20 +449,18 @@ async function generateReferences(doc) {
 
     if (links.length > 0) {
         for (const link of links) {
-            let href = cleanURL(link.getAttribute('href'));
+            const href = cleanURL(link.getAttribute('href'));
             const domain = extractDomain(href);
 
-            if (domain.toLowerCase() !== 'techopedia') {
-                if (!linkSet.has(href)) {
-                    linkSet.add(href);
+            if (!linkSet.has(href)) {
+                linkSet.add(href);
 
-                    const title = await fetchTitle(href);
-                    const formattedDomain = toTitleCase(domain);
+                const title = await fetchTitle(href);
+                const formattedDomain = toTitleCase(domain);
 
-                    const liHTML = `<li><a href="${href}">${title}</a> (${formattedDomain})</li>`;
-                    frontendLinksHTML += liHTML;
-                    referencesHTML += liHTML;
-                }
+                const liHTML = `<li><a href="${href}" target="_blank">${title}</a> (${formattedDomain})</li>`;
+                frontendLinksHTML += liHTML;
+                referencesHTML += liHTML;
             }
         }
 
@@ -388,7 +468,6 @@ async function generateReferences(doc) {
         </ol>
     </div>
     [/reference_content]`;
-
     } else {
         referencesHTML += `
         </ol>
@@ -431,27 +510,27 @@ function findDuplicateLinks(doc) {
 function fixHeadingsCapitalization(doc) {
     const headings = doc.querySelectorAll('h1, h2, h3, h4, h5, h6');
     const minorWords = [
-        "a", "an", "and", "as", "at", "but", "by", "for", "if", 
+        "a", "an", "and", "as", "at", "but", "by", "for", "if",
         "in", "nor", "of", "on", "or", "so", "the", "to", "up", "yet", "with"
     ];
 
     headings.forEach(heading => {
-        const text = heading.textContent.trim(); // Убираем лишние пробелы
-        if (!text) return; // Пропускаем пустые заголовки
+        const text = heading.textContent.trim();
+        if (!text) return;
 
         const words = text.split(/\s+/).map((word, index, arr) => {
             const lowerWord = word.toLowerCase();
             if (
-                index === 0 || // Первое слово
-                index === arr.length - 1 || // Последнее слово
-                !minorWords.includes(lowerWord) // Не служебное слово
+                index === 0 || 
+                index === arr.length - 1 || 
+                !minorWords.includes(lowerWord)
             ) {
-                return word.charAt(0).toUpperCase() + word.slice(1).toLowerCase(); // Капитализация
+                return word.charAt(0).toUpperCase() + word.slice(1).toLowerCase();
             }
-            return lowerWord; // Слово остается в нижнем регистре
+            return lowerWord;
         });
 
-        heading.textContent = words.join(" "); // Преобразуем массив обратно в строку
+        heading.textContent = words.join(" ");
     });
 }
 
