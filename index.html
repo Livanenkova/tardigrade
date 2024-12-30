@@ -276,6 +276,10 @@
             text-align: left;
             overflow-y: auto;
         }
+        input[type="checkbox"]:disabled + label {
+    color: gray;
+    cursor: not-allowed;
+}
 
         #htmlInput {
     width: 100%; /* Растянуть поле на всю ширину контейнера */
@@ -295,7 +299,7 @@
             <p class="description-subtitle">Simplify your content tasks in WordPress with ease:</p>
             <ul class="description-list">
                 <li>Cleans up unnecessary tags and attributes.</li>
-                <li>Fixes heading capitalization (APA style).</li>
+                <li>Fixes heading capitalization (APA style). (Feature in development.)</li>
                 <li>Finds and organizes external links.</li>
                 <li>Detects duplicate links.</li>
                 <li>Automatically updates X links to Twitter.</li>
@@ -320,16 +324,17 @@
                     <input type="checkbox" id="replaceSocialLinks">
                     Fix Twitter
                 </label>
-                <label>
-                    <input type="checkbox" id="fixCapitalization">
-                    Fix Headings (APA)
-                </label>
+
                 <label>
                     <input type="checkbox" id="findDuplicates">
                     Find Duplicate Links
                 </label>
+              <label>
+                    <input type="checkbox" id="fixCapitalization" disabled>
+                    Fix Headings (APA)
+                </label>
                 <label>
-                    <input type="checkbox" id="checkErrors">
+                    <input type="checkbox" id="checkErrors" disabled>
                     Check Links for Errors
                 </label>
             </div>
