@@ -485,7 +485,7 @@ async function generateReferences(doc) {
                     const title = await fetchTitle(href);
                     const formattedDomain = toTitleCase(domain);
 
-                    const liHTML = `<li><a href="${href}" target="_blank">${title}</a> (${formattedDomain})</li>`;
+                    const liHTML = `<li><a href="${href}">${title}</a> (${formattedDomain})</li>`;
                     frontendLinksHTML += liHTML;
                     referencesHTML += liHTML;
                 }
@@ -527,7 +527,7 @@ function findDuplicateLinks(doc) {
     if (duplicates.length > 0) {
         duplicates.forEach(([href, count]) => {
             const linkElement = document.createElement('p');
-            linkElement.innerHTML = `<a href="${href}" target="_blank">${href}</a> — ${count} times`;
+            linkElement.innerHTML = `<a href="${href}">${href}</a> — ${count} times`;
             duplicateLinksContainer.appendChild(linkElement);
         });
     } else {
