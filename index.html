@@ -399,6 +399,9 @@ async function processHtml() {
     updateProgress(20);
     await cleanAndFormatHtml(doc);
 
+   removeAriaLabelFromLists(doc);
+
+
     if (document.getElementById('replaceSocialLinks').checked) {
         replaceSocialLinks(doc);
     }
@@ -412,6 +415,7 @@ async function processHtml() {
     if (document.getElementById('findExternalLinks').checked) {
         await generateReferences(doc);
     }
+
 
     updateProgress(60);
 
@@ -444,6 +448,15 @@ function cleanAndFormatHtml(doc) {
 
         document.getElementById('formattedOutput').value = doc.body.innerHTML;
         resolve();
+    });
+}
+
+function removeAriaLabelFromLists(doc) {
+    const lists = doc.querySelectorAll('ul, ol'); // Находим все списки
+    lists.forEach(list => {
+        if (list.hasAttribute('aria-label')) {
+            list.removeAttribute('aria-label'); // Удаляем атрибут aria-label
+        }
     });
 }
 
