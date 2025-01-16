@@ -437,15 +437,23 @@ async function processHtml() {
 
 function cleanAndFormatHtml(doc) {
     return new Promise(resolve => {
+        // Удаляем теги <p> и <span>, оставляя их содержимое
         doc.querySelectorAll('p, span').forEach(tag => tag.replaceWith(...tag.childNodes));
+        // Удаляем атрибуты стиля
         doc.querySelectorAll('*[style]').forEach(tag => tag.removeAttribute('style'));
+        // Заменяем <b> на <strong>
         doc.querySelectorAll('b').forEach(b => b.outerHTML = `<strong>${b.innerHTML}</strong>`);
+        // Удаляем пустые заголовки
         doc.querySelectorAll('h2, h3, h4').forEach(heading => {
             if (!heading.textContent.trim()) heading.remove();
         });
-        
+        // Заменяем &nbsp; на пробелы
         doc.body.innerHTML = doc.body.innerHTML.replace(/&nbsp;/g, ' ');
 
+        // Удаляем атрибут aria-level из всех тегов <li>
+        doc.querySelectorAll('li[aria-level]').forEach(li => li.removeAttribute('aria-level'));
+
+        // Отображаем результат в textarea
         document.getElementById('formattedOutput').value = doc.body.innerHTML;
         resolve();
     });
