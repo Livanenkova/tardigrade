@@ -404,6 +404,7 @@ async function processHtml() {
 
     if (document.getElementById('replaceSocialLinks').checked) {
         replaceSocialLinks(doc);
+        replaceTextLinks(doc); 
     }
 
     if (document.getElementById('fixCapitalization').checked) {
@@ -469,13 +470,39 @@ function removeAriaLabelFromLists(doc) {
 }
 
 function replaceSocialLinks(doc) {
-    const links = doc.querySelectorAll('a[href*="www.x.com"]');
+    // Ищем все ссылки, содержащие "x.com"
+    const links = doc.querySelectorAll('a[href*="x.com"]');
     links.forEach(link => {
         const oldHref = link.getAttribute('href');
-        const newHref = oldHref.replace("www.x.com", "www.twitter.com");
-        link.setAttribute('href', newHref);
+        if (oldHref.includes("x.com")) {
+            // Заменяем "x.com" на "twitter.com"
+            const newHref = oldHref.replace("x.com", "twitter.com");
+            link.setAttribute('href', newHref);
+        }
     });
 }
+
+function replaceTextLinks(doc) {
+    const walker = document.createTreeWalker(doc.body, NodeFilter.SHOW_TEXT, null, false);
+
+    while (walker.nextNode()) {
+        const node = walker.currentNode;
+
+        if (node.nodeType === Node.TEXT_NODE) {
+            const text = node.nodeValue;
+
+            // Регулярное выражение для поиска ссылок на x.com
+            const urlRegex = /https?:\/\/x\.com\/[^\s]+/g;
+
+            if (urlRegex.test(text)) {
+                // Заменяем ссылки в тексте
+                const replacedText = text.replace(/https?:\/\/x\.com/g, 'https://twitter.com');
+                node.nodeValue = replacedText;
+            }
+        }
+    }
+}
+
 
 async function generateReferences(doc) {
     const links = doc.querySelectorAll('a[href]');
