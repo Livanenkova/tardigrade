@@ -334,9 +334,9 @@
                     Fix Headings (APA) (Feature in development.)
                 </label>
                 <label>
-                    <input type="checkbox" id="checkErrors" disabled>
-                    Check Links for Errors (Feature in development.)
-                </label>
+                    <input type="checkbox" id="checkErrors">
+                    Check Links for Errors (404)
+                  </label>
             </div>
             <div class="button-progress-wrapper">
                 <button onclick="processHtml()">Process HTML</button>
@@ -358,6 +358,10 @@
                 <div id="duplicateLinks" class="duplicate-links">
                     <h3 class="result-title">Duplicate Links:</h3>
                     <div id="duplicateLinksContent"></div>
+                </div>
+                <div id="brokenLinks" class="duplicate-links">
+                    <h3 class="result-title">Broken Links (404 errors):</h3>
+                    <div id="brokenLinksContent"></div>
                 </div>
             </div>
             
@@ -399,12 +403,11 @@ async function processHtml() {
     updateProgress(20);
     await cleanAndFormatHtml(doc);
 
-   removeAriaLabelFromLists(doc);
-
+    removeAriaLabelFromLists(doc);
 
     if (document.getElementById('replaceSocialLinks').checked) {
         replaceSocialLinks(doc);
-        replaceTextLinks(doc); 
+        replaceTextLinks(doc);
     }
 
     if (document.getElementById('fixCapitalization').checked) {
@@ -417,11 +420,16 @@ async function processHtml() {
         await generateReferences(doc);
     }
 
-
     updateProgress(60);
 
     if (document.getElementById('findDuplicates').checked) {
         findDuplicateLinks(doc);
+    }
+
+    updateProgress(75);
+
+    if (document.getElementById('checkErrors').checked) {
+        await checkLinksFor404(doc);
     }
 
     const appendReferences = document.getElementById('appendReferencesCheckbox').checked;
@@ -435,6 +443,7 @@ async function processHtml() {
 
     updateProgress(100);
 }
+
 
 function cleanAndFormatHtml(doc) {
     return new Promise(resolve => {
@@ -583,6 +592,8 @@ function findDuplicateLinks(doc) {
     }
 }
 
+
+
 function fixHeadingsCapitalization(doc) {
     const headings = doc.querySelectorAll('h1, h2, h3, h4, h5, h6');
     const minorWords = [
@@ -634,6 +645,44 @@ async function fetchTitle(url) {
         return 'No Title Available';
     }
 }
+
+async function checkLinksFor404(doc) {
+    const links = doc.querySelectorAll('a[href]');
+    const brokenLinksContainer = document.getElementById('brokenLinksContent');
+    brokenLinksContainer.innerHTML = '';
+
+    let brokenLinksCount = 0;
+
+    for (const link of links) {
+        const url = link.href;
+
+        try {
+            const response = await fetch(`https://api.allorigins.win/get?url=${encodeURIComponent(url)}`);
+
+            if (!response.ok) {
+                brokenLinksCount++;
+                brokenLinksContainer.innerHTML += `<p><strong>Error ${response.status}</strong>: <a href="${url}" target="_blank">${url}</a></p>`;
+                continue;
+            }
+
+            const result = await response.json();
+
+            // Проверка на код ошибки внутри полученных данных
+            if (result.status && result.status.http_code >= 400) {
+                brokenLinksCount++;
+                brokenLinksContainer.innerHTML += `<p><strong>Error ${result.status.http_code}</strong>: <a href="${url}" target="_blank">${url}</a></p>`;
+            }
+        } catch (error) {
+            brokenLinksCount++;
+            brokenLinksContainer.innerHTML += `<p><strong>Network Error</strong>: <a href="${url}" target="_blank">${url}</a></p>`;
+        }
+    }
+
+    if (brokenLinksCount === 0) {
+        brokenLinksContainer.innerHTML = '<p>No broken links found.</p>';
+    }
+}
+
     </script>
 </body>
 </html>
