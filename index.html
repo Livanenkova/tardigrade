@@ -329,14 +329,19 @@
                     <input type="checkbox" id="findDuplicates">
                     Find Duplicate Links
                 </label>
-              <label>
-                    <input type="checkbox" id="fixCapitalization" disabled>
-                    Fix Headings (APA) (Feature in development.)
-                </label>
                 <label>
                     <input type="checkbox" id="checkErrors">
                     Check Links for Errors (404)
                   </label>
+                <label>
+                    <input type="checkbox" id="fixHeadingsTitleCase">
+                    Fix Headings (Title Case – APA Style)
+                  </label>
+                  <label>
+                    <input type="checkbox" id="fixHeadingsSentenceCase">
+                    Fix Headings (Sentence Case)
+                  </label>
+
             </div>
             <div class="button-progress-wrapper">
                 <button onclick="processHtml()">Process HTML</button>
@@ -381,6 +386,18 @@ document.addEventListener("DOMContentLoaded", function () {
 
     progressCircle.style.strokeDasharray = `${circumference} ${circumference}`;
     progressCircle.style.strokeDashoffset = circumference;
+
+    // Взаимоотключение чекбоксов стилей заголовков
+    const titleBox = document.getElementById('fixHeadingsTitleCase');
+    const sentenceBox = document.getElementById('fixHeadingsSentenceCase');
+
+    titleBox.addEventListener('change', () => {
+        if (titleBox.checked) sentenceBox.checked = false;
+    });
+
+    sentenceBox.addEventListener('change', () => {
+        if (sentenceBox.checked) titleBox.checked = false;
+    });
 });
 
 function updateProgress(value) {
@@ -410,9 +427,11 @@ async function processHtml() {
         replaceTextLinks(doc);
     }
 
-    if (document.getElementById('fixCapitalization').checked) {
-        fixHeadingsCapitalization(doc);
-    }
+    if (document.getElementById('fixHeadingsTitleCase').checked) {
+    fixHeadingsCapitalization(doc, 'title');
+} else if (document.getElementById('fixHeadingsSentenceCase').checked) {
+    fixHeadingsCapitalization(doc, 'sentence');
+}
 
     updateProgress(40);
 
@@ -593,33 +612,51 @@ function findDuplicateLinks(doc) {
 }
 
 
+function fixHeadingsCapitalization(doc, style = 'title') {
+    const headings = doc.querySelectorAll('h1,h2,h3,h4,h5,h6');
+    const transformFn = style === 'sentence' ? toSentenceCase : toTitleCaseAPA;
 
-function fixHeadingsCapitalization(doc) {
-    const headings = doc.querySelectorAll('h1, h2, h3, h4, h5, h6');
-    const minorWords = [
-        "a", "an", "and", "as", "at", "but", "by", "for", "if",
-        "in", "nor", "of", "on", "or", "so", "the", "to", "up", "yet", "with"
-    ];
-
-    headings.forEach(heading => {
-        const text = heading.textContent.trim();
-        if (!text) return;
-
-        const words = text.split(/\s+/).map((word, index, arr) => {
-            const lowerWord = word.toLowerCase();
-            if (
-                index === 0 || 
-                index === arr.length - 1 || 
-                !minorWords.includes(lowerWord)
-            ) {
-                return word.charAt(0).toUpperCase() + word.slice(1).toLowerCase();
-            }
-            return lowerWord;
-        });
-
-        heading.textContent = words.join(" ");
+    headings.forEach(h => {
+        const text = h.textContent.trim();
+        if (text) h.textContent = transformFn(text);
     });
 }
+
+function toTitleCaseAPA(text) {
+    const minorWords = ['and', 'but', 'for', 'nor', 'or', 'so', 'yet', 'a', 'an', 'the', 'as', 'at', 'by', 'in', 'of', 'off', 'on', 'per', 'to', 'up', 'via'];
+
+    return text
+        .split(/(\s+)/)
+        .map((word, index, arr) => {
+            if (word.trim() === '') return word;
+
+            const isFirstWord = index === 0 || arr.slice(0, index).join('').match(/[:—-]\s*$/);
+
+            const lowerWord = word.toLowerCase();
+
+            if (
+                isFirstWord ||
+                lowerWord.length >= 4 ||
+                !minorWords.includes(lowerWord)
+            ) {
+                return lowerWord.charAt(0).toUpperCase() + lowerWord.slice(1);
+            } else {
+                return lowerWord;
+            }
+        })
+        .join('');
+}
+
+function toSentenceCase(text) {
+    text = text.toLowerCase();
+    return text.charAt(0).toUpperCase() + text.slice(1);
+}
+
+function toSentenceCase(text) {
+    text = text.toLowerCase();
+    return text.charAt(0).toUpperCase() + text.slice(1);
+}
+
 
 function toTitleCase(str) {
     return str.replace(/\w\S*/g, txt => txt.charAt(0).toUpperCase() + txt.substr(1).toLowerCase());
